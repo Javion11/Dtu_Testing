@@ -34,8 +34,8 @@ for cSet in UsedSets:
     if not os.path.exists(EvalName):
         print(EvalName)
 
-        Mesh = plyread(DataInName)
+        Mesh = plyread(DataInName) 
         Qdata = np.array(Mesh.vertex.x, Mesh.vertex.y, Mesh.vertex.z)
         Qdata = np.transpose(Qdata)
-        
+
 
