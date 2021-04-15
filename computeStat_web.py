@@ -3,14 +3,15 @@ import time
 import numpy as np
 
 from plyread import plyread
+from PointCompareMain import PointCompareMain
 
 # to calculate distances have been measured for all included sacns(UsedSets)
-datapath = ""
-plyPath = ""
-resultPath = ""
+# datapath = "" # TO Download
+plyPath = "/algo/algo/hanjiawei/mvs_result/baseline_traineval_noise/baseline_noise0/"
+resultPath = "/algo/algo/hanjiawei/mvs_result/baseline_traineval_noise/baseline_noise0/"
 
 method_string = "mvsnet"
-light_string = "13" # l3 all lights on, l7 is randomly sampled between the 7 settings(index 0-6)
+light_string = "l3" # l3 all lights on, l7 is randomly sampled between the 7 settings(index 0-6)
 representation_string = "Points"  # mvs representation "Points" or "Surfaces"
 
 
@@ -40,6 +41,7 @@ for cSet in UsedSets:
         Qdata = np.transpose(Qdata)
 
         BaseEval = PointCompareMain(cSet, Qdata, dst, datapath)
+        print("test!")
         
 
 
