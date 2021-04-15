@@ -1,7 +1,8 @@
 import os 
 import time
-
 import numpy as np
+
+from plyread import plyread
 
 # to calculate distances have been measured for all included sacns(UsedSets)
 datapath = ""
@@ -33,9 +34,12 @@ for cSet in UsedSets:
     # check eval result file is already computed
     if not os.path.exists(EvalName):
         print(EvalName)
-
-        Mesh = plyread(DataInName) 
-        Qdata = np.array(Mesh.vertex.x, Mesh.vertex.y, Mesh.vertex.z)
+        
+        # read the .ply file to eval
+        Qdata = plyread(DataInName) 
         Qdata = np.transpose(Qdata)
+
+        BaseEval = PointCompareMain(cSet, Qdata, dst, datapath)
+        
 
 
