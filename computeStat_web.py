@@ -6,9 +6,9 @@ from plyread import plyread
 from PointCompareMain import PointCompareMain
 
 # to calculate distances have been measured for all included sacns(UsedSets)
-datapath = "/Users/javion/Desktop/ImageDataset/SampleSet/MVS Data/" # TO Download
-plyPath = "/Users/javion/Desktop/symmetrical_11_noise2/"
-resultPath = "/Users/javion/Desktop/symmetrical_11_noise2/"
+datapath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/" 
+plyPath = "/algo/algo/hanjiawei/mvs_result/baseline_traineval_noise/baseline_noise2/"
+resultPath = "/algo/algo/hanjiawei/mvs_result/baseline_traineval_noise/baseline_noise2/"
 
 method_string = "mvsnet"
 light_string = "l3" # l3 all lights on, l7 is randomly sampled between the 7 settings(index 0-6)
@@ -41,7 +41,8 @@ for cSet in UsedSets:
         Qdata = np.transpose(Qdata)
 
         BaseEval = PointCompareMain(cSet, Qdata, dst, datapath)
-        print("test!")
+        
+        print()
         
 
 
