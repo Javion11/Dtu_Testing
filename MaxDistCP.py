@@ -2,7 +2,7 @@ import numpy as np
 import kdtree
 
 
-def MaxDistCP(Qto: np.ndarray, Qfrom: np.ndarray, BB: np.ndarray, MaxDist: float) -> float:
+def MaxDistCP(Qto: np.ndarray, Qfrom: np.ndarray, BB: np.ndarray, MaxDist: float) -> np.ndarray:
     Dist = np.ones((Qfrom.shape[0],1)) * MaxDist
     Range = np.floor((BB[1]-BB[0]) / MaxDist)
     Done = 0 # record the number of points has been computed

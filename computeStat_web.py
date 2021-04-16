@@ -1,6 +1,7 @@
 import os 
 import time
 import numpy as np
+import scipy.io as scio
 
 from plyread import plyread
 from PointCompareMain import PointCompareMain
@@ -36,13 +37,21 @@ for cSet in UsedSets:
     if not os.path.exists(EvalName):
         print(EvalName)
         
-        # read the .ply file to eval
+        # read the ply file to eval
         Qdata = plyread(DataInName) 
         Qdata = np.transpose(Qdata)
 
-        BaseEval = PointCompareMain(cSet, Qdata, dst, datapath)
+        MaxDist = 20 # outlier threshold of 20mm
+        BaseEval = PointCompareMain(cSet, Qdata, dst, datapath, MaxDist)
         
-        print()
+        print("Saving results")
+        BaseEval_dict = BaseEval.__dict__
+        scio.savemat(EvalName, BaseEval_dict)
+
+        print("mean/median Data (acc.) {:.4f} / {:.4f}" .format(np.mean(BaseEval.FilteredDdata), np.median(BaseEval.FilteredDdata)))
+        print("mean/median Stl (comp.) {:.4f} / {:.4f}" .format(np.mean(BaseEval.FilteredDstl), np.median(BaseEval.FilteredDstl)))
+
+
         
 
 
