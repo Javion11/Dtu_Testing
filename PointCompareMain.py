@@ -35,6 +35,7 @@ def reducePts(pts: list, dst: float) -> list:
             
             idx_points = NS.search_nn_dist(pt_to_search, dst) # the point inputing in the search is only one object
             for idx_point in idx_points:
+                idx_point = list(idx_point)
                 if idx_point not in ptsOut:
                     ptsOut.append(idx_point)
     print("downsample factor: {:.4f}".format(nPoints/len(ptsOut)))    
