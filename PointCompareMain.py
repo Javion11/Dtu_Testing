@@ -1,11 +1,12 @@
 import time
 import numpy as np
-import kdtree
+from sklearn.neighbors import KDTree
 import scipy.io as scio
 
 from plyread import plyread
+from MaxDistCP import MaxDistCP
 
-def reducePts(pts: list, dst: float) -> list:
+def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
     """
     reduces a point set, pts, in a stochastic manner, such that the minmum sdistance ibetween points is 'dst'.
     """
@@ -16,31 +17,28 @@ def reducePts(pts: list, dst: float) -> list:
 
     # according to the points to create kd tree
     pts_random = np.random.permutation(pts)
-    pts_random = list(pts_random)
-    pts = list(pts)
-    NS = kdtree.create(pts)
+    # test time used to create kdtree
+    t1 = time.time()
+
+    NS = KDTree(pts)
+    
+    t1_1 = time.time()
+    print(float(t1_1-t1))
 
     # search the KTtree for close neighbours in a chunk-wise fashion to save memory if points cloud is really big
-    ptsOut = [] # save points to output
-
-    Chunks = np.arange(0,nPoints,min(4e06, nPoints-1))
+    Chunks = np.arange(0,nPoints,min(4e06, nPoints-1)).astype("int")
     for cChunk in range(len(Chunks)):
-        pts_to_search = pts_random[Chunks[cChunk]:Chunks[cChunk + 1] + 1]
-        for pt_to_search in pts_to_search:
-            """
-            Search the n nearest nodes of the given point which are within given distance,point must be a location, not a node.
-            A list containing the n nearest nodes to the point within the distance will be returned.
-            Note:the point inputing in the search is only one object.
-            """
-            
-            idx_points = NS.search_nn_dist(pt_to_search, dst) # the point inputing in the search is only one object
-            for idx_point in idx_points:
-                idx_point = list(idx_point)
-                if idx_point not in ptsOut:
-                    ptsOut.append(idx_point)
-    print("downsample factor: {:.4f}".format(nPoints/len(ptsOut)))    
+        if cChunk == len(Chunks) - 1:
+            pts_to_search = pts_random[Chunks[cChunk]:, :]
+        else:
+            pts_to_search = pts_random[Chunks[cChunk]:Chunks[cChunk + 1], :]
+        t2 = time.time()
+        idx_points = NS.query_radius(pts_to_search, dst) # the point inputing in the search is only one object
+        ptsOut = pts[idx_points[0]] # save points to output
+        for idx_point in idx_points[1:]:
+            ptsOut = np.vstack((ptsOut,pts[idx_point]))
+    ptsOut = np.unique(ptsOut, axis=0)
     return ptsOut
-    
 
 
 class PointCompareMain():
@@ -68,7 +66,9 @@ class PointCompareMain():
 
     def PointCompareMain(self, cSet: int, Qdata: np.ndarray, dst: float, dataPath: str):
         # reduce points 0.2 mm neighbbourhood density
-        Qdata = reducePts(Qdata,dst)
+        # if points numbers in Qdata is smaller than 4e06, skip the reduce Points scale step
+        if len(Qdata) > 4e06 - 1:
+            Qdata = reducePts(Qdata,dst)
         cSet = str(cSet)
         cSet_fill = cSet.zfill(3)
         StlInName = dataPath + 'Points/stl/stl' + cSet_fill + '_total.ply'
@@ -83,13 +83,16 @@ class PointCompareMain():
         BB = mask_data['BB']
         Res = mask_data['Res']
         ObsMask = mask_data['ObsMask']
+        ObsMask_shape = np.array(ObsMask.shape)
 
-        MaxDist = self.MaxDist
+        MaxDist_default = 60
         print("Computing Data to Stl distances")
-        Ddata = MaxDistCP(Qstl, Qdata, BB, MaxDist)
+        # Ddata = MaxDistCP(Qstl, Qdata, BB, MaxDist_default)
+        Ddata = MaxDistCP(Qstl, Qdata, MaxDist_default)
 
         print("Computing Stl to Data distances")
-        Dstl = MaxDistCP(Qdata, Qstl, BB, MaxDist)
+        # Dstl = MaxDistCP(Qdata, Qstl, BB, MaxDist_default)
+        Dstl = MaxDistCP(Qdata, Qstl, MaxDist_default)
         print("Distances computed")
 
         # use mask
@@ -97,17 +100,15 @@ class PointCompareMain():
         one = np.ones((Qdata.shape[0], 1))
         Qv = (Qdata - one * BB[0,:]) / Res + 1
         Qv = np.round(Qv)
+        Qv = Qv.astype("int")
 
         # remove the points out of region(ObsMask)
-        self.DataInMask = np.full((Qv.shape[0], 1), value=False, dtype=bool)
-        Midx_list = [] # Midx1 refers to the point's index
-        # MidxA_list = [] # MidxA refers to the point in axis's location 
+        self.DataInMask = np.full((Qv.shape[0], 1), False, dtype=bool)
+        Midx_list = [] # Midx refers to the point's index
         for Midx, Qv_pt in enumerate(Qv):
-            if Qv_pt[0] > 0 and Qv_pt[0] <= ObsMask.shape[0] and\
-                Qv_pt[1] > 0 and Qv_pt[1] <= ObsMask.shape[1] and\
-                    Qv_pt[2] > 0 and Qv_pt[2] <= ObsMask.shape[2]:
-                    Midx1_list.append(Midx1)
-                    if ObsMask(Qv_pt[0], Qv_pt[1], Qv_pt[2]) == 1:
+            if np.all(Qv_pt > 0) and np.all(Qv_pt < ObsMask_shape ):
+                    Midx_list.append(Midx)
+                    if ObsMask[Qv_pt[0]][Qv_pt[1]][Qv_pt[2]] == 1:
                         self.DataInMask[Midx] = True
         self.Margin = Margin 
         self.Ddata = Ddata 
@@ -120,6 +121,7 @@ class PointCompareMain():
         self.StlAbovePlane = np.hstack((Qstl,np.ones(Qstl.shape[0],1))) * plane_data['P'] > 0
         self.Time = time.time()
 
+        MaxDist = self.MaxDist
         self.FilteredDdata = self.Ddata[self.DataInMask]
         self.FilteredDdata = self.FilteredDdata[self.FilteredDdata < self.MaxDist]
         self.FilteredDstl = self.Dstl[self.StlAbovePlane]
@@ -138,3 +140,9 @@ if __name__ == "__main__":
     mask_data = scio.loadmat(MaskName)
     plane_data = scio.loadmat(plane_data_path)
     print("test!")
+
+    # test reducePts function
+    npoints = np.random.randint(0,100,size=(20000,3))
+    dist = 1
+    ptsOut = reducePts(npoints,dist)
+    print(ptsOut.shape)
