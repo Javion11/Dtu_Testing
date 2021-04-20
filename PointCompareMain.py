@@ -40,6 +40,8 @@ def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
     ptsOut = np.unique(ptsOut, axis=0)
     return ptsOut
 
+def findByRow(mat: np.ndarray, raw: np.ndarray) -> np.ndarray:
+    return np.where((mat == raw).all(1))[0]
 
 class PointCompareMain():
     # def __init__(self, cSet: int, Qdata: np.ndarray, dst: float, dataPath: str, MaxDist=60: int):
@@ -58,11 +60,14 @@ class PointCompareMain():
         self.GroundPlane = None # Plane used to destingusie which stl points are 
         self.StlAbovePlane = None # Judge whether stl is above "ground plane"
         self.Time = None
-        self.PointCompareMain(self.cSet, self.Qdata, self.dst, self.dataPath)
-
+        
         # use the plane and mask condition to filter the points
         self.FilteredDstl = None 
         self.FilteredDdata = None
+
+        self.PointCompareMain(self.cSet, self.Qdata, self.dst, self.dataPath)
+
+        
 
     def PointCompareMain(self, cSet: int, Qdata: np.ndarray, dst: float, dataPath: str):
         # reduce points 0.2 mm neighbbourhood density
@@ -103,13 +108,36 @@ class PointCompareMain():
         Qv = Qv.astype("int")
 
         # remove the points out of region(ObsMask)
+        time_mask_1 = time.time()
         self.DataInMask = np.full((Qv.shape[0], 1), False, dtype=bool)
         Midx_list = [] # Midx refers to the point's index
         for Midx, Qv_pt in enumerate(Qv):
             if np.all(Qv_pt > 0) and np.all(Qv_pt < ObsMask_shape ):
                     Midx_list.append(Midx)
                     if ObsMask[Qv_pt[0]][Qv_pt[1]][Qv_pt[2]] == 1:
-                        self.DataInMask[Midx] = True
+                        self.DataInMask[Midx] = True   
+        time_mask_2 = time.time()   
+        print(time_mask_2 - time_mask_1)  
+        
+        """
+        another method to build DataInMask: ulitize set to find true index, unfortunately don't work,
+        because the set will remove the repeat elements
+        """
+        # time_mask_1 = time.time()
+        # self.DataInMask = np.full((Qv.shape[0], 1), True, dtype=bool)
+        # ObsMask_true_index = np.where(ObsMask == 1)
+        # # ObsMask_true_index = np.transpose(ObsMask_true_index)
+        # ObsMask_true_index_set = set(zip(*ObsMask_true_index))
+        # Qv_set = set(zip(*np.transpose(Qv)))
+        # Qv_set_Flase = Qv_set - ObsMask_true_index_set
+        # for element in Qv_set_Flase:
+        #     element = np.array(list(element))
+        #     element_index = findByRow(Qv, element)
+        #     self.DataInMask[element_index] = False
+        # time_mask_2 = time.time()
+        # print(time_mask_2 - time_mask_1)
+
+
         self.Margin = Margin 
         self.Ddata = Ddata 
         self.Qstl = Qstl
@@ -118,7 +146,7 @@ class PointCompareMain():
         plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
         plane_data = scio.loadmat(plane_data_path)
         self.GroundPlane = plane_data['P']
-        self.StlAbovePlane = np.hstack((Qstl,np.ones(Qstl.shape[0],1))) * plane_data['P'] > 0
+        self.StlAbovePlane = np.dot(np.hstack((Qstl,np.ones((Qstl.shape[0],1)))), plane_data['P']) > 0
         self.Time = time.time()
 
         MaxDist = self.MaxDist
@@ -132,17 +160,26 @@ class PointCompareMain():
 
 # test code, don't mind 
 if __name__ == "__main__":
-    Margin = 10
+    # Margin = 10
     cSet = "1"
-    dataPath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/"
-    MaskName = dataPath + 'ObsMask/ObsMask' + cSet + '_' + str(Margin) + '.mat'
-    plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
-    mask_data = scio.loadmat(MaskName)
-    plane_data = scio.loadmat(plane_data_path)
-    print("test!")
+    # dataPath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/"
+    # MaskName = dataPath + 'ObsMask/ObsMask' + cSet + '_' + str(Margin) + '.mat'
+    # plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
+    # mask_data = scio.loadmat(MaskName)
+    # plane_data = scio.loadmat(plane_data_path)
+    # print("test!")
 
-    # test reducePts function
-    npoints = np.random.randint(0,100,size=(20000,3))
-    dist = 1
-    ptsOut = reducePts(npoints,dist)
-    print(ptsOut.shape)
+    # # test reducePts function
+    # npoints = np.random.randint(0,100,size=(20000,3))
+    # dist = 1
+    # ptsOut = reducePts(npoints,dist)
+    # print(ptsOut.shape)
+
+    dataPath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/" 
+    Qstl = np.random.randint(1,10,size=(100,3))
+    hstack = np.hstack((Qstl,np.ones((Qstl.shape[0],1))))
+    plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
+    plane_data = scio.loadmat(plane_data_path)
+    GroundPlane = plane_data['P']
+    StlAbovePlane = np.dot(np.hstack((Qstl,np.ones((Qstl.shape[0],1)))), plane_data['P']) > 0
+    print(StlAbovePlane)
