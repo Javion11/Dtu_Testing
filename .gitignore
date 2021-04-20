@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 testfun.py
 __pycache__/
 
 
+=======
+.vscode/
+__pycache__/
+>>>>>>> Stashed changes
 

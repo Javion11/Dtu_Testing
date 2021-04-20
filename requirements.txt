@@ -1,4 +1,4 @@
 numpy
 plyfile
-kdtree
+sklearn
 scipy
