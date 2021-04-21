@@ -91,14 +91,14 @@ class PointCompareMain():
         ObsMask_shape = np.array(ObsMask.shape)
 
         MaxDist_default = 60
-        print("sacn"+cSet+" Computing Data to Stl distances")
+        print("sacn" + cSet + " Computing Data to Stl distances")
         # Ddata = MaxDistCP(Qstl, Qdata, BB, MaxDist_default)
         Ddata = MaxDistCP(Qstl, Qdata, MaxDist_default)
 
-        print("sacn"+cSet+" Computing Stl to Data distances")
+        print("sacn" + cSet + " Computing Stl to Data distances")
         # Dstl = MaxDistCP(Qdata, Qstl, BB, MaxDist_default)
         Dstl = MaxDistCP(Qdata, Qstl, MaxDist_default)
-        print("sacn"+cSet+" Distances computed")
+        print("sacn" + cSet + " Distances computed")
 
         # use mask
         # from get mask - inverted & modified
