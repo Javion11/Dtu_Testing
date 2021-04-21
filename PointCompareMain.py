@@ -91,14 +91,14 @@ class PointCompareMain():
         ObsMask_shape = np.array(ObsMask.shape)
 
         MaxDist_default = 60
-        print("Computing Data to Stl distances")
+        print("sacn"+cSet+" Computing Data to Stl distances")
         # Ddata = MaxDistCP(Qstl, Qdata, BB, MaxDist_default)
         Ddata = MaxDistCP(Qstl, Qdata, MaxDist_default)
 
-        print("Computing Stl to Data distances")
+        print("sacn"+cSet+" Computing Stl to Data distances")
         # Dstl = MaxDistCP(Qdata, Qstl, BB, MaxDist_default)
         Dstl = MaxDistCP(Qdata, Qstl, MaxDist_default)
-        print("Distances computed")
+        print("sacn"+cSet+" Distances computed")
 
         # use mask
         # from get mask - inverted & modified
@@ -154,29 +154,3 @@ class PointCompareMain():
 
 
 
-
-# test code, don't mind 
-# if __name__ == "__main__":
-    # Margin = 10
-    # cSet = "1"
-    # dataPath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/"
-    # MaskName = dataPath + 'ObsMask/ObsMask' + cSet + '_' + str(Margin) + '.mat'
-    # plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
-    # mask_data = scio.loadmat(MaskName)
-    # plane_data = scio.loadmat(plane_data_path)
-    # print("test!")
-
-    # # test reducePts function
-    # npoints = np.random.randint(0,100,size=(20000,3))
-    # dist = 1
-    # ptsOut = reducePts(npoints,dist)
-    # print(ptsOut.shape)
-
-    # dataPath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/" 
-    # Qstl = np.random.randint(1,10,size=(100,3))
-    # hstack = np.hstack((Qstl,np.ones((Qstl.shape[0],1))))
-    # plane_data_path = dataPath + "ObsMask/Plane" + cSet +".mat"
-    # plane_data = scio.loadmat(plane_data_path)
-    # GroundPlane = plane_data['P']
-    # StlAbovePlane = np.dot(np.hstack((Qstl,np.ones((Qstl.shape[0],1)))), plane_data['P']) > 0
-    # print(StlAbovePlane)
