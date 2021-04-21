@@ -51,7 +51,6 @@ for cSet in UsedSets:
         print("scan{} mean/median Data (acc.) {:.4f} / {:.4f}" .format(int(cSet), np.mean(BaseEval.FilteredDdata), np.median(BaseEval.FilteredDdata)))
         print("scan{} mean/median Stl (comp.) {:.4f} / {:.4f}" .format(int(cSet), np.mean(BaseEval.FilteredDstl), np.median(BaseEval.FilteredDstl)))
 
-
         
 
 
