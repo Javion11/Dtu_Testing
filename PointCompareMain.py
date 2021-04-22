@@ -73,7 +73,7 @@ class PointCompareMain():
         # reduce points 0.2 mm neighbbourhood density
         Qdata = reducePts(Qdata,dst)
         shape_reduce = Qdata.shape[0]
-        print("scan" + cSet + "downsample factor = {:.4f}".format(shape_raw / shape_reduce))
+        print("scan" + cSet + " downsample factor = {:.4f}".format(shape_raw / shape_reduce))
 
         StlMesh = plyread(StlInName) # stl points already reduced 0.2mm neighbourhood density
         Qstl = np.transpose(StlMesh) 
