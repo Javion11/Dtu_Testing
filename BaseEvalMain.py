@@ -8,8 +8,8 @@ from PointCompareMain import PointCompareMain
 
 # to calculate distances have been measured for all included sacns(UsedSets)
 datapath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/" 
-plyPath = "/algo/algo/hanjiawei/mvs_result/symmetrical_11_traineval_noise/symmetrical_11_noise0/"
-resultPath = "/algo/algo/hanjiawei/mvs_result/symmetrical_11_traineval_noise/symmetrical_11_noise0/"
+plyPath = "/algo/algo/hanjiawei/mvs_result/baseline_noise2/"
+resultPath = "/algo/algo/hanjiawei/mvs_result/baseline_noise2/"
 
 method_string = "mvsnet"
 light_string = "l3" # l3 all lights on, l7 is randomly sampled between the 7 settings(index 0-6)
