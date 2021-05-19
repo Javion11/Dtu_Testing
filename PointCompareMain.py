@@ -12,7 +12,7 @@ def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
     """
     reducePts_time1 = time.time()
     nPoints = pts.shape[0]
-    indexSet = np.full((nPoints,1), True, dtype=bool)
+    indexSet = np.full(nPoints, True, dtype=bool)
     RandOrd =  np.arange(nPoints)
     np.random.shuffle(RandOrd)
 
