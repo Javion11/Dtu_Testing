@@ -13,7 +13,7 @@ def plyread(file_dir: str) -> np.array:
         vertex_z = plydata['vertex']['z']
     return [vertex_x,vertex_y,vertex_z]
 
-# test code, don't mind
+# test code, please ignore it
 if __name__ == "__main__":
     plydata = PlyData.read("/algo/algo/hanjiawei/mvs_result/baseline_traineval_noise/baseline_noise4/mvsnet118_l3.ply")
     vertex_x = plydata['vertex']['x']
