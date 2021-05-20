@@ -29,7 +29,7 @@ def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
         idx_points = NS.query_radius(pts_to_search, dst) # the point inputing in the search is only one object, return the index of pts(which create KDtree)
         
         for idx_point, i in enumerate(idx_points):
-            id = RandOrd(i + Chunks[cChunk])
+            id = RandOrd[i + Chunks[cChunk]]
             if indexSet[id]:
                 indexSet[idx_point] = False
 
