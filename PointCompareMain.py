@@ -32,6 +32,7 @@ def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
             id = RandOrd[i + Chunks[cChunk]]
             if indexSet[id]:
                 indexSet[idx_point] = False
+                indexSet[id] = True # because idx_point include id, so this step is correct
 
         # this way is fast but wrong, hahaha!
         # idx_points_1d = np.unique(np.concatenate(idx_points))
