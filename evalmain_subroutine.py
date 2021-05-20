@@ -53,11 +53,9 @@ def subroutine(params):
         print("scan{} mean/median Data (acc.) {:.4f} / {:.4f}" .format(int(cSet), acc_mean, acc_median))
         print("scan{} mean/median Stl (comp.) {:.4f} / {:.4f}" .format(int(cSet), comp_mean, comp_median))
 
-    # write result data to txtfile
-    if not os.path.exists(results_txt):
-        os.system("touch {}".format(results_txt))
-    f = open(results_txt, "a")
-    # f.write("scan" + cSet + " acc_mean: " + str(acc_mean) + " acc_median: " + str(acc_median)
-    #         + " comp_mean: " + str(comp_mean) + " comp_median: " + str(comp_median) + '\n')
-    f.write("scan{} acc_mean: {:.4f}, acc_median: {:.4f}, comp_mean: {:.4f}, comp_median: {:.4f}\n"
-            .format(int(cSet), acc_mean, acc_median, comp_mean, comp_median))
+        # write result data to txtfile
+        if not os.path.exists(results_txt):
+            os.system("touch {}".format(results_txt))
+        f = open(results_txt, "a")
+        f.write("scan{} acc_mean: {:.4f}, acc_median: {:.4f}, comp_mean: {:.4f}, comp_median: {:.4f}\n"
+                .format(int(cSet), acc_mean, acc_median, comp_mean, comp_median))
