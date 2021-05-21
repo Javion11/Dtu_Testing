@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description="Compute ply distance between the g
 parser.add_argument('resultPath', help="the results path")
 parser.add_argument('MaxDist', default=20, help='set the dist larger than MaxDist as outliner points')
 args = parser.parse_args()
-args.resultPath = 
+# args.resultPath = 
 args.MaxDist = 20
 
 if __name__ == "__main__":
