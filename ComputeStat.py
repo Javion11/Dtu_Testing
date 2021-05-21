@@ -7,10 +7,10 @@ import scipy.io as scio
 this python file's function is to read the .mat file saved by BaseEvalMain.py, and compute the dist'mean, according the MaxDist value.
 """
 parser = argparse.ArgumentParser(description="Compute ply distance between the generated and the stl")
-parser.add_argument('--resultPath', required=True, help="the results path")
+parser.add_argument('--resultPath', help="the results path")
 parser.add_argument('--MaxDist', default=20, help='set the dist larger than MaxDist as outliner points')
 args = parser.parse_args()
-# args.resultPath = 
+args.resultPath = "/algo/algo/hanjiawei/denoise_result/mvsnet_cascade_denoise_newunt_newfeature_unet/"
 args.MaxDist = 20
 
 if __name__ == "__main__":
