@@ -7,8 +7,8 @@ import scipy.io as scio
 this python file's function is to read the .mat file saved by BaseEvalMain.py, and compute the dist'mean, according the MaxDist value.
 """
 parser = argparse.ArgumentParser(description="Compute ply distance between the generated and the stl")
-parser.add_argument('resultPath', help="the results path")
-parser.add_argument('MaxDist', default=20, help='set the dist larger than MaxDist as outliner points')
+parser.add_argument('--resultPath', required=True, help="the results path")
+parser.add_argument('--MaxDist', default=20, help='set the dist larger than MaxDist as outliner points')
 args = parser.parse_args()
 # args.resultPath = 
 args.MaxDist = 20
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     comp_mean = np.mean(comp_mean_list)
     comp_median = np.mean(comp_median_list)
     print("mean acc: {:.4f}  mean comp: {:.4f}".format(acc_mean, comp_mean))
-    f.open(results_txt, "a")
+    f = open(results_txt, "a")
     f.write("all scans, " + "acc_mean: {:.4f}, acc_median: {:.4f}, comp_mean: {:.4f}, comp_median: {:.4f}"
             .format(acc_mean, acc_median, comp_mean, comp_median))
     f.close()
