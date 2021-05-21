@@ -6,12 +6,12 @@ from itertools import product
 
 from evalmain_subroutine import subroutine
 
-parser = argparse.ArgumentParser(description="Eval ply distance between the generated and the stl")
+parser = argparse.ArgumentParser(description="Compute ply distance between the generated and the stl")
 parser.add_argument("--datapath", help="the path of stl ply file")
 parser.add_argument("--plyPath", help="the path of the generated ply file")
 args = parser.parse_args()
 args.datapath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/"
-# args.plyPath = "/algo/algo/hanjiawei/denoise_result/mvsnet_baseline/"
+# args.plyPath = "/algo/algo/hanjiawei/denoise_result/mvsnet_baseline/" # must add the last '/'
 
 if __name__ == "__main__":
     datapath = [args.datapath]
