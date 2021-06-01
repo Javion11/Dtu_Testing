@@ -3,3 +3,4 @@ plyfile
 sklearn
 scipy
 multiprocess
+torch
