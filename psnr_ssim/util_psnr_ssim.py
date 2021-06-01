@@ -98,6 +98,8 @@ def read_pfm(filename):
     file.close()
     return data, scale
 
-confidence = read_pfm("/algo/algo/hanjiawei/denoise_result/mvsnet_denoise_clean_newunet_newfeaturenet_l1_lossweight_dynamic_method3/scan1/confidence/00000000.pfm")[0]
-photo_mask = confidence > 0.8
-print(photo_mask)
+# NOTE test code, please ignore it
+if __name__ == "__main__":
+    confidence = read_pfm("/algo/algo/hanjiawei/denoise_result/mvsnet_denoise_clean_newunet_newfeaturenet_l1_lossweight_dynamic_method3/scan1/confidence/00000000.pfm")[0]
+    photo_mask = confidence > 0.8
+    print(photo_mask)
