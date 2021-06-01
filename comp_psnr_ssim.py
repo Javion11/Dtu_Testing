@@ -61,8 +61,8 @@ if __name__ == "__main__":
     test_scans = [scan_name.split('/')[-1] for scan_name in os.listdir(os.path.join(args.target_dir, "dtu"))] 
     psnr_ssim_txt = os.path.join(args.input_dir, "psnr_ssim.txt")
     params_list = product([args.input_dir], [args.target_dir], test_scans)
-    # with mp.get_context("spawn").Pool(22) as pool:
-    #         pool.map(subroutine, params_list)
+    with mp.get_context("spawn").Pool(22) as pool:
+            pool.map(subroutine, params_list)
     
     # compute the stat of all scans
     f_read = open(psnr_ssim_txt, "r")
