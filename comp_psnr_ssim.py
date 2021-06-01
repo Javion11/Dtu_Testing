@@ -31,11 +31,14 @@ def subroutine(params):
     img_name_list = [image_name.split('/')[-1] for image_name in os.listdir(os.path.join(target_dir, "dtu", scan, "images"))]
     for img_name in img_name_list:
         img_net = torch.from_numpy(np.array(Image.open(os.path.join(input_dir, scan, "rgb", img_name))) / 255.0)
+        img_net = img_net.cuda()
         img_net = img_net.permute(2, 0, 1)
         img_noise = torch.from_numpy(np.array(Image.open(os.path.join(target_dir, "dtu_noise", scan, "images", img_name))) / 255.0)
         img_noise = img_noise.permute(2, 0, 1)
+        img_noise = img_noise.cuda()
         img_gt = torch.from_numpy(np.array(Image.open(os.path.join(target_dir, "dtu", scan, "images", img_name))) / 255.0)
         img_gt = img_gt.permute(2, 0, 1)
+        img_gt = img_gt.cuda()
         img_gt_unsqueeze = img_gt.unsqueeze(0)
         img_gt_resize = F.interpolate(img_gt_unsqueeze, size=(img_net.size()[1], img_net.size()[2]), mode='area').squeeze(0)
         noise_psnr = psnr(img_noise, img_gt)
@@ -46,6 +49,8 @@ def subroutine(params):
         noise_ssim_list.append(noise_ssim)
         net_psnr_list.append(net_psnr)
         net_ssim_list.append(net_ssim)
+        del img_net, img_noise, img_gt, img_gt_resize
+        
     noise_psnr_mean = torch.tensor(noise_psnr_list).mean()
     noise_ssim_mean = torch.tensor(noise_ssim_list).mean()
     net_psnr_mean = torch.tensor(net_psnr_list).mean()
