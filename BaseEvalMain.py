@@ -11,7 +11,7 @@ parser.add_argument("--datapath", help="the path of stl ply file")
 parser.add_argument("--plyPath", help="the path of the generated ply file")
 args = parser.parse_args()
 args.datapath = "/algo/algo/hanjiawei/DataSet/SampleSet/MVS Data/"
-# args.plyPath = "/algo/algo/hanjiawei/denoise_result/mvsnet_baseline/" # must add the last '/'
+args.plyPath = "/algo/algo/hanjiawei/denoise_result/mvsnet_cleanimg/unet_block_conv1x1_mask/" # must add the last '/'
 
 if __name__ == "__main__":
     datapath = [args.datapath]
