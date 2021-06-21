@@ -62,21 +62,17 @@ def subroutine(params):
 
         #NOTE: Using Numpy and the method2 to calculate psnr and ssim
         img_net = np.array(Image.open(os.path.join(input_dir, scan, img_name_jpg)))
-        img_net = np.moveaxis(img_net, 0, -1)
         img_noise = np.array(Image.open(os.path.join(target_dir, "dtu_noise", scan, "images", img_name_jpg)))
-        img_noise = np.moveaxis(img_noise, 0, -1)
         img_gt = np.array(Image.open(os.path.join(target_dir, "dtu", scan, "images", img_name_jpg)))
-        if img_gt.shape != img_net.shape:
-            img_gt_resize = cv2.resize(img_gt, dsize=(img_net.shape[2], img_net.shape[1]), interpolation=cv2.INTER_AREA).squeeze(0)
-        img_gt = np.moveaxis(img_gt, 0, -1)
 
-        noise_psnr = psnr(img_noise, img_gt)
+        noise_psnr = psnr(img_noise, img_gt, crop_border=0)
         noise_ssim = ssim(img_noise, img_gt)
         if img_gt.shape != img_net.shape:
-            net_psnr = psnr(img_net, img_gt_resize)
+            img_gt_resize = cv2.resize(img_gt, dsize=(img_net.shape[2], img_net.shape[1]), interpolation=cv2.INTER_AREA)
+            net_psnr = psnr(img_net, img_gt_resize, crop_border=0)
             net_ssim = ssim(img_net, img_gt_resize)
         else:
-            net_psnr = psnr(img_net, img_gt)
+            net_psnr = psnr(img_net, img_gt, crop_border=0)
             net_ssim = ssim(img_net, img_gt)
         
     
