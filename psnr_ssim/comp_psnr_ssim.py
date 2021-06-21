@@ -67,7 +67,7 @@ def subroutine(params):
         img_noise = np.moveaxis(img_noise, 0, -1)
         img_gt = np.array(Image.open(os.path.join(target_dir, "dtu", scan, "images", img_name_jpg)))
         if img_gt.shape != img_net.shape:
-            img_gt_resize = cv2.resize(img_gt, dsize=(img_net.shape[2], img_net.shape[1]), mode='area').squeeze(0)
+            img_gt_resize = cv2.resize(img_gt, dsize=(img_net.shape[2], img_net.shape[1]), interpolation=cv2.INTER_AREA).squeeze(0)
         img_gt = np.moveaxis(img_gt, 0, -1)
 
         noise_psnr = psnr(img_noise, img_gt)
