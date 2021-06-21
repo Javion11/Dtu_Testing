@@ -24,7 +24,7 @@ def subroutine(params):
     input_dir = params[0]
     target_dir = params[1]
     scan = params[2]
-    psnr_ssim_txt = os.path.join(input_dir, "psnr_ssim_method2.txt")
+    psnr_ssim_txt = os.path.join(input_dir, "psnr_ssim_numpy.txt")
     # psnr ssim list in scan
     noise_psnr_list = []
     noise_ssim_list = []
@@ -95,9 +95,9 @@ def subroutine(params):
 
 if __name__ == "__main__":
     test_scans = [scan_name.split('/')[-1] for scan_name in os.listdir(os.path.join(args.target_dir, "dtu"))]
-    psnr_ssim_txt = os.path.join(args.input_dir, "psnr_ssim_method2.txt")
+    psnr_ssim_txt = os.path.join(args.input_dir, "psnr_ssim_numpy.txt")
     params_list = product([args.input_dir], [args.target_dir], test_scans)
-    with mp.get_context("spawn").Pool(8) as pool:
+    with mp.get_context("spawn").Pool(11) as pool:
             pool.map(subroutine, params_list)
 
     # compute the stat of all scans
