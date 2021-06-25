@@ -7,7 +7,7 @@ import cv2
 
 # cv2.setNumThreads(0)
 def psnr(input, target):
-    """Computes peak signal-to-noise ratio."""
+    """Computes peak signal-to-noise ratio.input and target must be normalized to [0,1]"""
     return 10 * torch.log10(1 / F.mse_loss(input, target))
 
 def create_ssim_window(window_size, channel):
