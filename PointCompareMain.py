@@ -10,34 +10,40 @@ def reducePts(pts: np.ndarray, dst: float) -> np.ndarray:
     """
     reduces a point set, pts, in a stochastic manner, such that the minmum sdistance ibetween points is 'dst'.
     """
+    reducePts_time1 = time.time()
     nPoints = pts.shape[0]
-    indexSet = np.full((nPoints,1), True, dtype=bool)
+    indexSet = np.full(nPoints, True, dtype=bool)
     RandOrd =  np.arange(nPoints)
     np.random.shuffle(RandOrd)
 
     # according to the points to create kd tree
-    pts_random = np.random.permutation(pts)
-    # test time used to create kdtree
-    t1 = time.time()
-
     NS = KDTree(pts)
-    
-    t1_1 = time.time()
-    print(float(t1_1-t1))
 
     # search the KTtree for close neighbours in a chunk-wise fashion to save memory if points cloud is really big
-    Chunks = np.arange(0,nPoints,min(4e06, nPoints-1)).astype("int")
+    Chunks = np.arange(0, nPoints, int(4e06)) 
     for cChunk in range(len(Chunks)):
         if cChunk == len(Chunks) - 1:
-            pts_to_search = pts_random[Chunks[cChunk]:, :]
+            pts_to_search = pts[RandOrd[Chunks[cChunk]:], :]
         else:
-            pts_to_search = pts_random[Chunks[cChunk]:Chunks[cChunk + 1], :]
-        t2 = time.time()
-        idx_points = NS.query_radius(pts_to_search, dst) # the point inputing in the search is only one object
-        ptsOut = pts[idx_points[0]] # save points to output
-        for idx_point in idx_points[1:]:
-            ptsOut = np.vstack((ptsOut,pts[idx_point]))
-    ptsOut = np.unique(ptsOut, axis=0)
+            pts_to_search = pts[RandOrd[Chunks[cChunk]:Chunks[cChunk + 1]], :]
+        idx_points = NS.query_radius(pts_to_search, dst) # the point inputing in the search is only one object, return the index of pts(which create KDtree)
+        
+        for i, idx_point in enumerate(idx_points):
+            id = RandOrd[i + Chunks[cChunk]]
+            if indexSet[id]:
+                indexSet[idx_point] = False
+                indexSet[id] = True # because idx_point include id, so this step is correct
+
+        # this way is fast but wrong, hahaha!
+        # idx_points_1d = np.unique(np.concatenate(idx_points))
+        # indexSet[idx_points_1d] = False
+        # if cChunk == len(Chunks) - 1:
+        #     indexSet[RandOrd[Chunks[cChunk]:]] = True
+        # else:
+        #     indexSet[RandOrd[Chunks[cChunk]:Chunks[cChunk + 1]]] = True
+    ptsOut = pts[indexSet]
+    reducePts_time2 = time.time()
+    print("The sparse process spend {} s".format(int(reducePts_time2 - reducePts_time1)))
     return ptsOut
 
 def findByRow(mat: np.ndarray, raw: np.ndarray) -> np.ndarray:
@@ -71,9 +77,12 @@ class PointCompareMain():
 
     def PointCompareMain(self, cSet: int, Qdata: np.ndarray, dst: float, dataPath: str):
         # reduce points 0.2 mm neighbbourhood density
-        # if points numbers in Qdata is smaller than 4e06, skip the reduce Points scale step
-        if len(Qdata) > 4e06:
-            Qdata = reducePts(Qdata,dst)
+        point_num_origin = Qdata.shape[0]
+        Qdata = reducePts(Qdata,dst)
+        point_num_generated = Qdata.shape[0]
+        downsample_factor = point_num_generated / point_num_origin
+        print("scan{} downsample factor: {:.4f}".format(cSet, downsample_factor))
+
         cSet = str(cSet)
         cSet_fill = cSet.zfill(3)
         StlInName = dataPath + 'Points/stl/stl' + cSet_fill + '_total.ply'
